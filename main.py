@@ -24,23 +24,24 @@ def main(base_url):
             for x in result:
                 if re.search("contentUrl", x):
                     print()
-                    result = str(x).split(":",1)[1].replace('"', '')
+                    result = "'{}'".format(x.split(":",1)[1].replace('"', '').replace(" ","")[:-2])
                     
+                    # result = str(x).split(":", 1)[1][:-2].replace('"',"").replace(" ", "").replace("\n", "").split()[0]
                     print("\033[10;35m{}\033[0;m".format(result))
 
-            open_url     = "firefox --new-tab {}".format(result)
-            download_url = "curl -o {}.mp4 {}".format(uuid.uuid1(), result)
+                    open_url     = "firefox --new-tab {}".format(result)
+                    download_url = "curl -o {}.mp4 {}".format(uuid.uuid1(), result)
 
-            download  = input("Deseja fazer o download do video?[y, n] ")
-            open_u    = input("Deseja abrir o link no navegador?[y, n] ")
+                    download  = input("Deseja fazer o download do video?[y, n] ")
+                    open_u    = input("Deseja abrir o link no navegador?[y, n] ")
 
-            if download == 'y':
-                os.system(download_url)
+                    if download == 'y':
+                        os.system(download_url)
             
-            if open_u == 'y':
-                os.system(open_url)
+                    if open_u == 'y':
+                        os.system(open_url)
         
-        os.system("rm se.html")
+                    os.system("rm se.html")
     
     except Exception as err:
         print(err)
