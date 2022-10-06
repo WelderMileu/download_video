@@ -6,8 +6,8 @@ try:
 except Exception as err:
     print(err)
 
-class Simple(base_url):
-    def __init__(self):
+class Simple:
+    def __init__(self, base_url):
         try:
             self.url    = str(base_url)
             self.res    = requests.get(self.url)
@@ -24,49 +24,48 @@ class Simple(base_url):
 
             if self.status == 200:
                 if os.path.exists('/usr/bin/wget'):
-                    command = "wget -nv {} -O man.html".format(self.url)
+                    command = "wget -nv {} -O se.html".format(self.url)
                     download_page_index(command)
             
                 elif os.path.exists("/usr/bin/curl"):
-                    command = "curl -o man.html {}".format(self.url)
+                    command = "curl -o se.html {}".format(self.url)
                     download_page_index(command)
             
                 else:
                     print("Please install wget or curl of continue ...")
-                    break
+                    
             
             else:
                 print("[{}] it'not possible continue status code invalid".format(self.status))
-                break
 
-        if status == 200: 
-            result = open("se.html", "r")
+            if self.status == 200: 
+                result = open("se.html", "r")
             
-            for x in result:
-                if re.search("contentUrl", x):
-                    print()
-                    result = "'{}'".format(x.split(":",1)[1].replace('"', '').replace(" ","")[:-2])
+                for x in result:
+                    if re.search("contentUrl", x):
+                        print()
+                        result = "'{}'".format(x.split(":",1)[1].replace('"', '').replace(" ","")[:-2])
                     
-                    # result = str(x).split(":", 1)[1][:-2].replace('"',"").replace(" ", "").replace("\n", "").split()[0]
-                    print("\033[10;35m{}\033[0;m".format(result))
+                        print("\033[10;35m{}\033[0;m".format(result))
 
-                    open_url     = "firefox --new-tab {}".format(result)
-                    download_url = "curl -o {}.mp4 {}".format(uuid.uuid1(), result)
+                        open_url     = "firefox --new-tab {}".format(result)
+                        download_url = "curl -o {}.mp4 {}".format(uuid.uuid1(), result)
 
-                    download  = input("Deseja fazer o download do video?[y, n] ")
-                    open_u    = input("Deseja abrir o link no navegador?[y, n] ")
+                        download  = input("Deseja fazer o download do video?[y, n] ")
+                        open_u    = input("Deseja abrir o link no navegador?[y, n] ")
 
-                    if download == 'y':
-                        os.system(download_url)
+                        if download == 'y':
+                            os.system(download_url)
             
-                    if open_u == 'y':
-                        os.system(open_url)
+                        if open_u == 'y':
+                            os.system(open_url)
         
-                    os.system("rm se.html")
+                        os.system("rm se.html")
     
-    except Exception as err:
-        print(err)
+        except Exception as err:
+            print(err)
 
 if __name__ == '__main__':
     base_url = param[1]
-    main(base_url)
+    Simple = Simple(base_url)
+    Simple.execute()
