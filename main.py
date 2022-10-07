@@ -6,6 +6,8 @@ try:
     import uuid
     import requests
     import argparse
+    import wget
+    from termcolor import colored
 
 except Exception as err:
     print(err)
@@ -22,25 +24,8 @@ class Simple:
 
     def execute(self):
         try:
-            def download_page_index(download_tool):
-                download_page = "{}".format(download_tool)
-                os.system(download_page)
-
             if self.status == 200:
-                if os.path.exists('/usr/bin/wget'):
-                    command = "wget {} -O se.html".format(self.url)
-                    download_page_index(command)
-            
-                elif os.path.exists("/usr/bin/curl"):
-                    command = "curl -o se.html {}".format(self.url)
-                    download_page_index(command)
-            
-                else:
-                    print("Please install wget or curl of continue ...")
-                    
-            
-            else:
-                print("[{}] it'not possible continue status code invalid".format(self.status))
+                wget.download(self.url, './se.html')    
 
             if self.status == 200: 
                 result = open("se.html", "r")
@@ -48,26 +33,19 @@ class Simple:
                 for x in result:
                     if re.search("contentUrl", x):
                         print()
-                        result = "'{}'".format(x.split(":",1)[1].replace('"', '').replace(" ","")[:-2])
-                    
-                        print("\033[10;35m{}\033[0;m".format(result))
+                        repl   = x.split(":",1)[1].replace('"', '').replace(" ","")[:-2]
+                        result = "{}".format(str(repl))
+
+                        print("\n{}".format(colored(result, 'cyan')))
 
                         open_url     = "firefox --new-tab {}".format(result)
-                        
-                        if os.path.exists('/usr/bin/wget'):
-                            download_url = "wget {} -O {}.mp4".format(result, uuid.uuid1())
-
-                        elif os.path.exists('/usr/bin/curl'):
-                            download_url = "curl -o {}.mp4 {}".format(uuid.uuid1(), result)
-
-                        else:
-                            print("Please in install wget or curl of continue ...")
-
-                        download  = input("Deseja fazer o download do video?[y, n] ")
+            
+                        download  = input("\nDeseja fazer o download do video?[y, n] ")
                         open_u    = input("Deseja abrir o link no navegador?[y, n] ")
 
                         if download == 'y':
-                            os.system(download_url)
+                            print("\nDownload of the video.")
+                            wget.download(result, '{}.mp4'.format(uuid.uuid1()))
             
                         if open_u == 'y':
                             os.system(open_url)
@@ -92,11 +70,7 @@ if __name__ == '__main__':
 
             Simple = Simple(base_url)
             Simple.execute()
-    
-        else:
-            print('Please add base_url of continue ...')
 
     except Exception as err:
         print(err)
-                                                                                                        
-
+                         
