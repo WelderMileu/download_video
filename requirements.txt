@@ -1,0 +1,5 @@
+wget
+uuid
+termcolor
+argparse
+requests
