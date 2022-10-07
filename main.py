@@ -1,7 +1,11 @@
 #!/usr/bin/python3
 try:
     from sys import argv as param
-    import re, os, uuid, requests
+    import re
+    import os
+    import uuid
+    import requests
+    import argparse
 
 except Exception as err:
     print(err)
@@ -24,7 +28,7 @@ class Simple:
 
             if self.status == 200:
                 if os.path.exists('/usr/bin/wget'):
-                    command = "wget -nv {} -O se.html".format(self.url)
+                    command = "wget {} -O se.html".format(self.url)
                     download_page_index(command)
             
                 elif os.path.exists("/usr/bin/curl"):
@@ -49,7 +53,15 @@ class Simple:
                         print("\033[10;35m{}\033[0;m".format(result))
 
                         open_url     = "firefox --new-tab {}".format(result)
-                        download_url = "curl -o {}.mp4 {}".format(uuid.uuid1(), result)
+                        
+                        if os.path.exists('/usr/bin/wget'):
+                            download_url = "wget {} -O {}.mp4".format(result, uuid.uuid1())
+
+                        elif os.path.exists('/usr/bin/curl'):
+                            download_url = "curl -o {}.mp4 {}".format(uuid.uuid1(), result)
+
+                        else:
+                            print("Please in install wget or curl of continue ...")
 
                         download  = input("Deseja fazer o download do video?[y, n] ")
                         open_u    = input("Deseja abrir o link no navegador?[y, n] ")
@@ -64,8 +76,27 @@ class Simple:
     
         except Exception as err:
             print(err)
-
+    
 if __name__ == '__main__':
-    base_url = param[1]
-    Simple = Simple(base_url)
-    Simple.execute()
+    try:
+        all = argparse.ArgumentParser(
+                prog='main.py', 
+                usage='python3 ./%(prog)s -u <base_url>', 
+                description='Download of open video tool')
+
+        all.add_argument('-u', help='base_url of the video', required=True)
+        args = vars(all.parse_args())
+
+        if args['u']:
+            base_url = args['u']
+
+            Simple = Simple(base_url)
+            Simple.execute()
+    
+        else:
+            print('Please add base_url of continue ...')
+
+    except Exception as err:
+        print(err)
+                                                                                                        
+
