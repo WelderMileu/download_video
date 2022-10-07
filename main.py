@@ -53,7 +53,7 @@ class Simple:
                             wget.download(path_video, '{}.mp4'.format(uuid.uuid1()))
                 
                     if os.path.exists('./se.html'):
-                        os.system("rm se.html")
+                        os.remove("./se.html")
     
         except Exception as err:
             print(err)
