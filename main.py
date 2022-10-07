@@ -25,31 +25,34 @@ class Simple:
     def execute(self):
         try:
             if self.status == 200:
-                wget.download(self.url, './se.html')    
-
-            if self.status == 200: 
-                result = open("se.html", "r")
+                wget.download(self.url, './se.html')     
+                clone_page = open("se.html", "r")
             
-                for x in result:
+                for x in clone_page:
                     if re.search("contentUrl", x):
-                        print()
-                        repl   = x.split(":",1)[1].replace('"', '').replace(" ","")[:-2]
-                        result = "{}".format(str(repl))
+                        arrange    = x.split(":",1)[1].replace('"', '').replace(" ","")[:-2]
+                        path_video = "{}".format(str(arrange))
+                        
+                        if args['vw']:
+                            print("\n{}".format(colored(path_video, 'cyan')))
 
-                        print("\n{}".format(colored(result, 'cyan')))
+                        if args['o']:
+                            if os.path.exists('/usr/bin/firefox'):
+                                open_url = "firefox --new-tab '{}'".format(path_video)
+                            
+                            elif os.path.exists('/usr/bin/google-chrome'):
+                                open_url = "google-chrome {}".format(path_video)        
 
-                        open_url     = "firefox --new-tab {}".format(result)
-            
-                        download  = input("\nDeseja fazer o download do video?[y, n] ")
-                        open_u    = input("Deseja abrir o link no navegador?[y, n] ")
+                            elif os.path.exists('/usr/bin/goole'):
+                                open_url = "google {}".format(path_video)
 
-                        if download == 'y':
-                            print("\nDownload of the video.")
-                            wget.download(result, '{}.mp4'.format(uuid.uuid1()))
-            
-                        if open_u == 'y':
                             os.system(open_url)
-        
+
+                        if args['dl']:
+                            print("\ndownloading video ...")
+                            wget.download(path_video, '{}.mp4'.format(uuid.uuid1()))
+                
+                    if os.path.exists('./se.html'):
                         os.system("rm se.html")
     
         except Exception as err:
@@ -59,10 +62,32 @@ if __name__ == '__main__':
     try:
         all = argparse.ArgumentParser(
                 prog='main.py', 
-                usage='python3 ./%(prog)s -u <base_url>', 
-                description='Download of open video tool')
+                usage='python3 ./%(prog)s -u <base_url> <params>', 
+                description='video downloading tool')
 
-        all.add_argument('-u', help='base_url of the video', required=True)
+        all.add_argument(
+                '-u', 
+                help='base_url of the video', 
+                required=True)
+
+        all.add_argument(
+            '-dl',
+            help='download of the video',
+            action='store_true'
+        )
+
+        all.add_argument(
+            '-vw',
+            help='only view video url',
+            action='store_true'
+        )
+
+        all.add_argument(
+            '-o',
+            help='open link in new browse',
+            action='store_true'
+        )
+
         args = vars(all.parse_args())
 
         if args['u']:
@@ -74,3 +99,5 @@ if __name__ == '__main__':
     except Exception as err:
         print(err)
                          
+                                                                                                        
+
