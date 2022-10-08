@@ -10,54 +10,68 @@ try:
     from termcolor import colored
 
 except Exception as err:
-    print(err)
+    print("exports: ", err)
 
 class Simple:
     def __init__(self, base_url):
         try:
-            self.url    = str(base_url)
-            self.res    = requests.get(self.url)
-            self.status = self.res.status_code
+            self.url         = str(base_url)
+            self.res         = requests.get(self.url)
+            self.status      = self.res.status_code
+            self.page_clone  = "./se.html"
+            self.path_video  = ""
 
         except Exception as err:
             print(err)
 
-    def execute(self):
-        try:
-            if self.status == 200:
-                wget.download(self.url, './se.html')     
-                clone_page = open("se.html", "r")
-            
-                for x in clone_page:
-                    if re.search("contentUrl", x):
-                        arrange    = x.split(":",1)[1].replace('"', '').replace(" ","")[:-2]
-                        path_video = "{}".format(str(arrange))
-                        
-                        if args['vw']:
-                            print("\n{}".format(colored(path_video, 'cyan')))
+    def clone_page(self):
+        if self.status == 200: 
+            wget.download(self.url, self.page_clone)     
 
-                        if args['o']:
-                            if os.path.exists('/usr/bin/firefox'):
-                                open_url = "firefox --new-tab '{}'".format(path_video)
-                            
-                            elif os.path.exists('/usr/bin/google-chrome'):
-                                open_url = "google-chrome {}".format(path_video)        
 
-                            elif os.path.exists('/usr/bin/goole'):
-                                open_url = "google {}".format(path_video)
+    def get_contentUrl(self):
+        contentUrl = open(self.page_clone, 'r')
 
-                            os.system(open_url)
+        for x in contentUrl:
+            if re.search("contentUrl", x):
+                arrange    = x.split(":",1)[1].replace('"', '').replace(" ","")[:-2]
+                self.path_video = "{}".format(str(arrange))
 
-                        if args['dl']:
-                            print("\ndownloading video ...")
-                            wget.download(path_video, '{}.mp4'.format(uuid.uuid1()))
-                
-                    if os.path.exists('./se.html'):
-                        os.remove("./se.html")
+
+    def show_url(self):
+        if args['vw']:
+            print("\n{}".format(colored(self.path_video, 'cyan')))
+
+    def open_browse(self):
+        if args['o']:
+            if os.path.exists('/usr/bin/firefox'):
+                open_url = "firefox --new-tab '{}'".format(self.path_video)
+
+            elif os.path.exists('/usr/bin/google-chrome'):
+                open_url = "google-chrome {}".format(self.path_video)
+
+            elif os.path.exists('/usr/bin/goole'):
+                open_url = "google {}".format(self.path_video)
+
+            os.system(open_url)
+
+    def download_video(self):
+        if args['dl']:
+            print("\ndownloading video ...")
+            wget.download(self.path_video, '{}.mp4'.format(uuid.uuid1()))
     
-        except Exception as err:
-            print(err)
-    
+    def remove_page_clone(self):            
+        if os.path.exists(self.page_clone):
+            os.remove(self.page_clone)
+
+    def main(self):
+        Simple.clone_page()
+        Simple.get_contentUrl()
+        Simple.show_url()
+        Simple.open_browse()
+        Simple.download_video()
+        Simple.remove_page_clone()
+
 if __name__ == '__main__':
     try:
         all = argparse.ArgumentParser(
@@ -94,10 +108,11 @@ if __name__ == '__main__':
             base_url = args['u']
 
             Simple = Simple(base_url)
-            Simple.execute()
+            Simple.main()
 
     except Exception as err:
         print(err)
                          
                                                                                                         
 
+                                                 
