@@ -55,8 +55,6 @@ class Simple:
                 content = r.text 
 
                 if code == 200:
-                    print(content)
-
                     soup_v = BeautifulSoup(content)
                     video_urls = soup_v.find_all('a')
                     
