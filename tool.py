@@ -15,7 +15,7 @@ except Exception as err:
 class Simple:
     def __init__(self):
         try:
-            self.domain = 'https://www.xnxx.com'
+            self.domain = '<base_url>'
             self.res    = requests.get(self.domain)
             self.code   = self.res.status_code
             self.body   = self.res.text
