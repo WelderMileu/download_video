@@ -83,20 +83,33 @@ class Simple:
 
                     if d_s == 200:
                         wget.download(domain_download, './se.html')
-                        read_f = open('./se.html', 'r')
+                        
+                        path_page = open('./se.html', 'r')
 
-                        for c in read_f:
-                            contentUrl = re.search('"contentUrl":', c)
-                            if contentUrl:
-                                new_name     = "{}.mp4".format(uuid.uuid1())
+                        for t in path_page:
+                            if re.search('"thumbnailUrl":', t):
+                                image_thumb = "{}".format(t.split()[1][1:-2]).replace('"', '')
                                 
-                                ####################
-                                #    this bug ...
-                                ####################
+                                quest = input("Deseja fazer o download?[y,n] ")
+                                
+                                if quest == 'y':
+                                    wget.download(image_thumb, 'image.jpg')
+                                    os.system('ristretto ./image.jpg &')
+                                
+                            
+                            if re.search('"contentUrl":', t):
+                                domain_video = "{}".format(t.split()[1][1:-2])
+                                new_name = "{}.mp4".format(uuid.uuid1())
 
-                                print(str(c).split(':')[1])
+                                quest_v = input("Deseja fazer o download do video?[y,n]")
+                                
+                                if quest_v == 'y':
+                                    wget.download(domain_video, new_name)
 
-                        os.remove('./se.html')           
+                        os.remove('./se.html')
+                        
+                        if os.path.exists('./image.jpg'):
+                            os.remove('./image.jpg')
             else:
                 print('domain not found')
 
