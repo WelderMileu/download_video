@@ -8,14 +8,15 @@ try:
     import wget
     from time import sleep
     import os
+    import argparse
 
 except Exception as err:
     print(err)
 
 class Simple:
-    def __init__(self):
+    def __init__(self, base_url):
         try:
-            self.domain = '<base_url>'
+            self.domain = str(base_url)
             self.res    = requests.get(self.domain)
             self.code   = self.res.status_code
             self.body   = self.res.text
@@ -58,9 +59,9 @@ class Simple:
             print(categorie_label)
 
     def list_videos(self):
-        r       = requests.get(self.domain_categorie)
-        code    = r.status_code
-        content = r.text 
+        domain  = requests.get(self.domain_categorie)
+        code    = domain.status_code
+        content = domain.text 
 
         if code == 200:
             soup_v = BeautifulSoup(content)
@@ -134,5 +135,14 @@ class Simple:
             print(err)
 
 if __name__ == '__main__':
-    Simple = Simple()
+    parser = argparse.ArgumentParser(
+            description='Download video',
+            prog='tool.py',
+            usage='python ./%(prog)s -u <base_url>'
+            )
+
+    parser.add_argument('-u', help="base url", required=True)
+    opt = parser.parse_args()
+
+    Simple = Simple(opt.u)
     Simple.execute()
