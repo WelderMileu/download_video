@@ -65,20 +65,31 @@ class Simple:
 
         if code == 200:
             soup_v = BeautifulSoup(content)
-            video_urls = soup_v.find_all('a')
-                    
+            video_urls  = soup_v.find_all('a')
+            content_url = [] 
+            new_content_url =[]
+
             for c in video_urls:
                 if str(c).__contains__('/video'):
                     path_video_url = str(c).split()[1].replace('><img', '')
                             
                     if str(path_video_url).__contains__('href'):
                         url_path   = str(path_video_url).split('=')[1].replace('"', '')
-                        index_path = video_urls.index(c)
-                                
-                        print("[{}] {}".format(index_path, url_path))
-                            
+                        content_url.append(url_path)
+            
+            # no repeat path_video
+            for i in content_url:
+                if i not in new_content_url:
+                    new_content_url.append(i)
+
+            new_content_url.sort()
+            
+            for i in new_content_url:
+                index_path = new_content_url.index(i)
+                print("[{}] {}".format(index_path, i))
+                           
             selected_path_video = input('\nSelect index of video: ')
-            domain_u = str(video_urls[int(selected_path_video)]).split()[1].replace('"', '').replace("href=", "")
+            domain_u = new_content_url[int(selected_path_video)] 
 
             self.domain_download_video_and_thumb = "{}{}".format(self.domain, domain_u)
 
