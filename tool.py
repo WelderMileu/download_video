@@ -97,18 +97,18 @@ class Simple:
         if re.search('"thumbnailUrl":', param):
             image_thumb = "{}".format(param.split()[1][1:-2]).replace('"', '')
                                 
-            quest = input("Deseja fazer o download?[y,n] ")
+            quest = input("\nWant do download the image?[y,n] ")
                                 
             if quest == 'y':
-                wget.download(image_thumb, 'image.jpg')
-                os.system('ristretto ./image.jpg &')
+                wget.download(image_thumb, self.tmp_file_image)
+                os.system('ristretto {} &'.format(self.tmp_file_image))
 
     def video_download(self, param):
         if re.search('"contentUrl":', param):
             domain_video = "{}".format(param.split()[1][1:-2])
             new_name = "{}.mp4".format(uuid.uuid1())
 
-            quest_v = input("Deseja fazer o download do video?[y,n]")
+            quest_v = input("\nWant to download the video?[y,n]")
                                 
             if quest_v == 'y':
                 wget.download(domain_video, new_name)
@@ -128,7 +128,7 @@ class Simple:
                 Simple.thumbnail_image_download(x)
                 Simple.video_download(x)
 
-    def remove_temp_files(self):
+    def remove_tmp_files(self):
         if os.path.exists(self.tmp_file_analysis):
             os.remove(self.tmp_file_analysis)
                         
@@ -140,7 +140,7 @@ class Simple:
             Simple.list_categories()
             Simple.list_videos()
             Simple.download_file_analysis()
-            Simple.remove_temp_files()
+            Simple.remove_tmp_files()
 
         except Exception as err:
             print(err)
@@ -157,3 +157,4 @@ if __name__ == '__main__':
 
     Simple = Simple(opt.u)
     Simple.execute()
+                         
